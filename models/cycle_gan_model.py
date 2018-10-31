@@ -84,7 +84,7 @@ class CycleGANModel(BaseModel):
         fake_B[0,0,:,:] = fake_B[0,1,:,:]
         fake_B[0,2,:,:] = fake_B[0,1,:,:]
 
-        ones = torch.ones(fake_B.shape)
+        ones = torch.ones(fake_B.shape).to(self.device)
         self.fake_B = torch.where(fake_B > 0, ones, -ones)
 
         self.rec_A = self.netG_B(self.fake_B)
