@@ -78,7 +78,15 @@ class CycleGANModel(BaseModel):
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     def forward(self):
-        self.fake_B = self.netG_A(self.real_A)
+        fake_B = self.netG_A(self.real_A)
+
+        # use only green channel
+        fake_B[0,0,:,:] = fake_B[0,1,:,:]
+        fake_B[0,2,:,:] = fake_B[0,1,:,:]
+
+        ones = torch.ones(fake_B.shape)
+        self.fake_B = torch.where(fake_B > 0, ones, -ones)
+
         self.rec_A = self.netG_B(self.fake_B)
 
         self.fake_A = self.netG_B(self.real_B)
